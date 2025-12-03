@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+#ML Model Training Service
+  ml-app-train:
+    build: 
+      context: .
+      dockerfile: ml-app/Dockerfile
+    command: ["python", "entrypoint/train.py"]
+
+    volumes:
+      - ./data:/data
+      - ./config:/config
+      - ./models:/models
+
+#ML Model Inference Service
+  ml-app-inference-api:
+      build: 
+        context: .
+        dockerfile: ml-app/Dockerfile
+      command: ["python", "entrypoint/inference_api.py"]
+
+      ports:
+        - "5001:5001"
+
+      volumes:
+        - ./data:/data
+        - ./config:/congig
+        - ./models:/models
+      depends_on:
+        - ml-app-train
+
+
+#Web user interface service
+  ui-app:
+    build: 
+      context: .
+      dockerfile: ui-app/Dockerfile
+    ports:
+      - "8050:8050"
+    environment:
+      - INFERENCE_API_HOST=ml-app-inference-api
+    volumes:
+      - ./data:/data
+      - ./config:/congig
+      - ./models:/models
+    depends_on:
+      - ml-app-inference-api
+
+
+
+#docker-compose up
+#docker-compose down
+#docker-compose up --build
