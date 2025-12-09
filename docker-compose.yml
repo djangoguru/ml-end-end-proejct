@@ -25,7 +25,7 @@ services:
 
       volumes:
         - ./data:/data
-        - ./config:/congig
+        - ./config:/config
         - ./models:/models
       depends_on:
         - ml-app-train
@@ -42,7 +42,7 @@ services:
       - INFERENCE_API_HOST=ml-app-inference-api
     volumes:
       - ./data:/data
-      - ./config:/congig
+      - ./config:/config
       - ./models:/models
     depends_on:
       - ml-app-inference-api
